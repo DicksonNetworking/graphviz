@@ -1722,7 +1722,13 @@ int ncross(graph_t * g)
 
 static int ordercmpf(int *i0, int *i1)
 {
-    return *i0 - *i1;
+  if (*i0 < *i1) {
+    return -1;
+  }
+  if (*i0 > *i1) {
+    return 1;
+  }
+  return 0;
 }
 
 /* flat_mval:
