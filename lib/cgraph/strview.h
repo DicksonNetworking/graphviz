@@ -11,6 +11,7 @@
 #include <cgraph/strcasecmp.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <string.h>
 
 /// a non-owning string reference
@@ -90,4 +91,32 @@ static inline bool strview_str_eq(strview_t a, const char *b) {
   assert(b != NULL);
 
   return strview_eq(a, strview(b, '\0'));
+}
+
+/// does `slice` point to a range within `whole`?
+static inline bool strview_within_str(strview_t slice, const char *whole) {
+
+  assert(whole != NULL);
+
+  // is the slice invalid?
+  if (slice.data == NULL) {
+    return false;
+  }
+
+  // does the slice extend to the left of the string?
+  if (slice.data < whole) {
+    return false;
+  }
+
+  // does the slice wrap around memory?
+  if (UINTPTR_MAX - slice.size < (uintptr_t)slice.data) {
+    return false;
+  }
+
+  // does the slice extend to the right of the string?
+  if (slice.data + slice.size > whole + strlen(whole) + 1) {
+    return false;
+  }
+
+  return true;
 }
